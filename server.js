@@ -13,8 +13,10 @@ const app = express()
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
-app.use('/api/user', userRoute)
-
+app.use('/api/users', userRoute)
+app.get("/", (req, res) =>{
+    res.json("Hello from server")
+})
 
 app.listen(PORT, () => {
     console.log(`server is running on port number ${PORT}`)
