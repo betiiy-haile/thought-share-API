@@ -4,44 +4,52 @@ import jwt from 'jsonwebtoken'
 import { validationResult } from 'express-validator'
 import UserModel from '../Models/UserModel.js'
 
-export const registerUser = asyncHandler(async ( req, res ) => {
-    const { name, email, password } = req.body
+export const registerUser = asyncHandler(async (req, res) => {
+    const { name, email, password } = req.body;
 
-    const errors = validationResult(req)
+    const errors = validationResult(req);
 
-    if(!errors.isEmpty()){
-        res.status(400)
+    if (!errors.isEmpty()) {
+        res.status(400);
         res.json({
-            errors: errors.array()
-        })
+            errors: errors.array(),
+        });
+        return;
     }
 
-    const salt = await bcrypt.genSalt(10)
-    const hashedPaswword = await bcrypt.hash(password, salt)
+    // Check if user with the provided email already exists
+    const existingUser = await UserModel.findOne({ email });
+    if (existingUser) {
+        res.status(400);
+        res.json({
+            error: "Email already exists",
+        });
+        return;
+    }
 
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
 
     const user = await UserModel.create({
         name,
         email,
-        password: hashedPaswword
-    })
+        password: hashedPassword,
+    });
 
-    if(user) {
+    if (user) {
         res.status(201).json({
             _id: user._id,
             name: user.name,
             email: user.email,
-            token: generateToken(user._id)
-        })
-    } else  {
-        res.status(400)
-        throw new Error("Invalid User Data")
+            token: generateToken(user._id),
+        });
+    } else {
+        res.status(400).json({ error: "Invalid user data" });
     }
-})
+});
 
 
 export const loginUser = asyncHandler( async (req, res) => {
-    console.log("hello from login user")
     const { email, password } = req.body
 
     const errors = validationResult(req)
