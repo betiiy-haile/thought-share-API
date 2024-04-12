@@ -51,15 +51,7 @@ export const registerUser = asyncHandler(async (req, res) => {
 
 export const loginUser = asyncHandler( async (req, res) => {
     const { email, password } = req.body
-
-    // const errors = validationResult(req)
-    // if(!errors.isEmpty()) {
-    //     res.status(400)
-    //     res.json({
-    //         errors: errors.array()
-    //     })
-    // }
-
+    
     const user = await UserModel.findOne({ email });
     if (user) {
         const isPasswordValid = await bcrypt.compare(password, user.password);
