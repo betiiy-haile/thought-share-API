@@ -76,6 +76,11 @@ export const getAllusers =  asyncHandler(async (req, res) => {
     res.status(200).json(users)
 })
 
+export const getUser =  asyncHandler(async (req, res) => {
+    const user = await UserModel.findById(req.params.id)
+    res.status(200).json(user)
+})
+
 export const generateToken = ( id ) => {
     return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: '30d'})
 }

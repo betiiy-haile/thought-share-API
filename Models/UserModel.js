@@ -16,7 +16,10 @@ const UserSchems = new mongoose.Schema({
         required: true
     },
     Image: {
-        type: String,
+        type: {
+            public_id: String,
+            url: String
+        },
     },
     posts: {
         type: [Schema.Types.ObjectId],
