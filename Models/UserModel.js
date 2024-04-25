@@ -15,7 +15,7 @@ const UserSchems = new mongoose.Schema({
         type: String,
         required: true
     },
-    Image: {
+    image: {
         type: {
             public_id: String,
             url: String

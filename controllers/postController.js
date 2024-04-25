@@ -3,6 +3,7 @@ import asyncHandler from "express-async-handler";
 import PostModel from "../Models/PostModel.js";
 
 export const createPost = asyncHandler( async (req, res) => {
+
     const { title, content, category, image , slug} = req.body
     const result = await cloudinary.uploader.upload(image, {
         resource_type: "image",
@@ -31,11 +32,13 @@ export const createPost = asyncHandler( async (req, res) => {
             slug: post.slug,
             image: post.image
         })
-    } else {
-        res.status(400).json({ error: "Invalid post data" })
     }
-    
+    else {
+        res.status(400).json({ error: "Invalid post data" })
+   
+    }
 })
+    
 
 export const getPosts = asyncHandler( async (req, res) => {
     const posts = await PostModel.find()

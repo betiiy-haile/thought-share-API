@@ -4,7 +4,8 @@ import { createPost, getPosts } from "../controllers/postController.js"
 
 const postRoute = express.Router()
 
-postRoute.post("/new-post", createPost)
+// postRoute.post("/new-post", createPost)
+postRoute.post("/", createPost)
 
 postRoute.get("/",  getPosts)
 
