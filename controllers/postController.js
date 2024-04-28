@@ -5,6 +5,8 @@ import PostModel from "../Models/PostModel.js";
 export const createPost = asyncHandler( async (req, res) => {
 
     const { title, content, category, image , slug} = req.body
+    const cookies = req.cookies
+    console.log("cookies", cookies)
     const result = await cloudinary.uploader.upload(image, {
         resource_type: "image",
         folder: "posts"        
@@ -25,12 +27,12 @@ export const createPost = asyncHandler( async (req, res) => {
 
     if (post) {
         res.status(201).json({
-            _id: post._id,
-            title: post.title,
-            content: post.content,
-            category: post.category,
-            slug: post.slug,
-            image: post.image
+                _id: post._id,
+                title: post.title,
+                content: post.content,
+                category: post.category,
+                slug: post.slug,
+                image: post.image
         })
     }
     else {
