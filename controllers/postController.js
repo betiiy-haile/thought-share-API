@@ -1,18 +1,21 @@
 import cloudinary from "../utils/cloudinary.js";
 import asyncHandler from "express-async-handler";
 import PostModel from "../Models/PostModel.js";
+import UserModel from "../Models/UserModel.js";
+import jwt from "jsonwebtoken"
 
 export const createPost = asyncHandler( async (req, res) => {
 
     const { title, content, category, image , slug} = req.body
-    const cookies = req.cookies
-    console.log("cookies", cookies)
+    const token = req.headers.authorization.split(" ")[1];
+    const { id, email, name } = jwt.decode(token)
     const result = await cloudinary.uploader.upload(image, {
         resource_type: "image",
         folder: "posts"        
     })
-    console.log(result)
-    console.log("after cloud")
+    // console.log("result from cloud", result)
+
+    const user = await UserModel.findById(id)
 
     const post = await PostModel.create({
         title,
@@ -22,7 +25,8 @@ export const createPost = asyncHandler( async (req, res) => {
         image:{
             public_id: result.public_id,
             url: result.secure_url
-        }
+        },
+        user
     })
 
     if (post) {
@@ -32,6 +36,7 @@ export const createPost = asyncHandler( async (req, res) => {
                 content: post.content,
                 category: post.category,
                 slug: post.slug,
+                user: post.user,
                 image: post.image
         })
     }
