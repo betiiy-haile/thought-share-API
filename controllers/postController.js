@@ -48,6 +48,6 @@ export const createPost = asyncHandler( async (req, res) => {
     
 
 export const getPosts = asyncHandler( async (req, res) => {
-    const posts = await PostModel.find()
+    const posts = await PostModel.find().populate("user")
     res.status(200).json(posts)
 })
