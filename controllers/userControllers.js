@@ -1,4 +1,5 @@
 import asyncHandler from 'express-async-handler'
+import cloudinary from "../utils/cloudinary.js";
 import bcrypt from "bcryptjs"
 import jwt from 'jsonwebtoken'
 import { validationResult } from 'express-validator'
@@ -70,14 +71,38 @@ export const loginUser = asyncHandler( async (req, res) => {
     }
 })
 
+export const updateProfile = asyncHandler(async (req, res) => {
+    // the image needs to be in base64 format
+    const { image } = req.body
+    const token = req.headers.authorization.split(" ")[1];
+    const { id } = jwt.decode(token)
+    const result = await cloudinary.uploader.upload(image, {
+        resource_type: "image",
+        folder: "profile"
+    })
+    const user = await UserModel.findById(id)
+    const updateUser = await UserModel.findByIdAndUpdate(id, {
+        image: {
+            public_id: result.public_id,
+            url: result.secure_url
+        },
+        token: generateToken(user._id, user.email, user.name, result.secure_url)
+    }, { new: true })  
+    
+    res.status(200).json({
+        msg: "Profile Updated Successfully",
+        user: updateUser
+    })
+    })
+
 
 export const getAllusers =  asyncHandler(async (req, res) => {
-    const users = await UserModel.find()
+    const users = await UserModel.find().populate('posts')
     res.status(200).json(users)
 })
 
 export const getUser =  asyncHandler(async (req, res) => {
-    const user = await UserModel.findById(req.params.id)
+    const user = await UserModel.findById(req.params.id).populate('posts')
     res.status(200).json(user)
 })
 

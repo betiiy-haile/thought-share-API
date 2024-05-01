@@ -1,6 +1,6 @@
 import express from "express"
 import { body } from "express-validator"
-import { getAllusers, getUser, loginUser, registerUser } from "../controllers/userControllers.js"
+import { getAllusers, getUser, loginUser, registerUser, updateProfile } from "../controllers/userControllers.js"
 
 const userRoute = express.Router()
 
@@ -19,6 +19,7 @@ userRoute.post('/login', [
 
 userRoute.get("/", getAllusers)
 userRoute.get("/:id", getUser)
+userRoute.patch("/:id", updateProfile)
 
 export default userRoute
 
