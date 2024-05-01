@@ -58,7 +58,11 @@ export const loginUser = asyncHandler( async (req, res) => {
         const isPasswordValid = await bcrypt.compare(password, user.password);
         if (isPasswordValid) {
             res.status(200).json({
-                user,
+                _id: user._id,
+                name: user.name,
+                email: user.email,
+                posts: user.posts,
+                image: user.image,
                 token: generateToken(user._id, user.email, user.name, user.image),
             });
         } else {
