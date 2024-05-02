@@ -5,6 +5,16 @@ import jwt from 'jsonwebtoken'
 import { validationResult } from 'express-validator'
 import UserModel from '../Models/UserModel.js'
 
+const slugify = (str) =>
+    str
+        .toLowerCase()
+        .trim()
+        .replace(/[^\w\s-]/g, "")
+        .replace(/[\s_-]+/g, "-")
+        .replace(/^-+|-+$/g, "");
+
+
+
 export const registerUser = asyncHandler(async (req, res) => {
     const { name, email, password } = req.body;
 
@@ -34,6 +44,7 @@ export const registerUser = asyncHandler(async (req, res) => {
     const user = await UserModel.create({
         name,
         email,
+        username: slugify(name),
         password: hashedPassword,
     });
 
@@ -42,6 +53,7 @@ export const registerUser = asyncHandler(async (req, res) => {
             _id: user._id,
             name: user.name,
             email: user.email,
+            username: user.username,
             token: generateToken(user._id, user.email, user.name, user.image),
         });
     } else {
@@ -62,6 +74,7 @@ export const loginUser = asyncHandler( async (req, res) => {
                 name: user.name,
                 email: user.email,
                 posts: user.posts,
+                username: user.username,
                 image: user.image,
                 token: generateToken(user._id, user.email, user.name, user.image),
             });

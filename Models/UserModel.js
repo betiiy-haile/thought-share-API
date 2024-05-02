@@ -15,6 +15,10 @@ const UserSchems = new mongoose.Schema({
         type: String,
         required: true
     },
+    username: {
+        type: String,
+        required: true
+    },
     image: {
         type: {
             public_id: String,
